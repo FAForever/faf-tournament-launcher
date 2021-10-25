@@ -1,0 +1,38 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        createGameRequest-out-0:
+          destination: "faf-lobby"
+        createGameSuccess-in-0:
+          destination: "faf-lobby"
+          group: "tourneylauncher.createGame.success"
+        createGameFailed-in-0:
+          destination: "faf-lobby"
+          group: "tourneylauncher.createGame.failed"
+        gameResult-in-0:
+          destination: "faf-lobby"
+          group: "tourneylauncher.gameResults"
+      rabbit:
+        bindings:
+          createGameRequest-out-0:
+            producer:
+              routingKeyExpression: headers['routingKey']
+          createGameSuccess-in-0:
+            consumer:
+              bindingRoutingKey: "success.match.create"
+              autoBindDlq: true
+          createGameFailed-in-0:
+            consumer:
+              bindingRoutingKey: "error.match.create"
+              autoBindDlq: true
+          gameResult-in-0:
+            consumer:
+              bindingRoutingKey: "success.gameResults.create"
+              autoBindDlq: true
+      source: createGameRequest
+    function:
+      definition: createGameSuccess;createGameFailed;gameResult
+logging:
+  level:
+    ROOT: info
