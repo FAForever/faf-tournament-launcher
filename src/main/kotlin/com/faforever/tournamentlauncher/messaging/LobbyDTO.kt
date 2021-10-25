@@ -83,7 +83,7 @@ enum class ArmyOutcome {
     UNKNOWN,
     CONFLICTING;
 
-    fun toDomainArmyOutcome() = when(this) {
+    fun toDomainArmyOutcome() = when (this) {
         VICTORY -> DomainArmyOutcome.VICTORY
         DEFEAT -> DomainArmyOutcome.DEFEAT
         DRAW -> DomainArmyOutcome.DRAW
@@ -112,7 +112,7 @@ enum class GameOutcome {
     DRAW,
     UNKNOWN;
 
-    fun toDomainGameOutcome() = when(this) {
+    fun toDomainGameOutcome() = when (this) {
         VICTORY -> DomainGameOutcome.VICTORY
         DEFEAT -> DomainGameOutcome.DEFEAT
         DRAW -> DomainGameOutcome.DRAW

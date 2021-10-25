@@ -14,7 +14,6 @@ enum class GameOutcome {
     UNKNOWN,
 }
 
-
 enum class ArmyOutcome {
     VICTORY,
     DEFEAT,
