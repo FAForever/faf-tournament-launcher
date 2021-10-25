@@ -17,7 +17,7 @@ plugins {
 }
 
 group = "com.faforever"
-version = "0.0.1-SNAPSHOT"
+version = "SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 configurations {
