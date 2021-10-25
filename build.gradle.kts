@@ -33,6 +33,7 @@ repositories {
 extra["springCloudVersion"] = "2020.0.4"
 
 dependencies {
+    implementation("io.github.microutils:kotlin-logging:1.5.9")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 //    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
     implementation("org.springframework.boot:spring-boot-starter-web")
