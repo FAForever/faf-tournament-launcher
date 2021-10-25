@@ -28,23 +28,24 @@ class RabbitConfig {
 
     @Bean
     fun createGameSuccess(
-        launchService: MatchService,
+        matchService: MatchService,
     ): (Message<MatchCreateSuccess>) -> Unit = { successMessage ->
         val requestId = UUID.fromString(successMessage.headers[CORRELATION_ID] as String)
-        launchService.reportSuccess(requestId, successMessage.payload.gameId)
+        matchService.reportSuccess(requestId, successMessage.payload.gameId)
     }
 
     @Bean
     fun createGameFailed(
-        launchService: MatchService,
+        matchService: MatchService,
     ): (Message<MatchCreateError>) -> Unit = { errorMessage ->
         val requestId = UUID.fromString(errorMessage.headers[CORRELATION_ID] as String)
-        launchService.reportError(requestId, errorMessage.payload.errorCode)
+        matchService.reportError(requestId, errorMessage.payload.errorCode)
     }
 
     @Bean
     fun gameResult(
-        launchService: MatchService,
+        matchService: MatchService,
     ): (Message<MatchResult>) -> Unit = { resultMessage ->
+        matchService.reportMatchResult(resultMessage.payload.toDomainMatchResult())
     }
 }

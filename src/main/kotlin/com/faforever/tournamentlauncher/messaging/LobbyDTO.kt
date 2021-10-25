@@ -3,8 +3,13 @@ package com.faforever.tournamentlauncher.messaging
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.UUID
+import com.faforever.tournamentlauncher.domain.ArmyOutcome as DomainArmyOutcome
+import com.faforever.tournamentlauncher.domain.ArmyResult as DomainArmyResult
 import com.faforever.tournamentlauncher.domain.Faction as DomainFaction
+import com.faforever.tournamentlauncher.domain.GameOutcome as DomainGameOutcome
 import com.faforever.tournamentlauncher.domain.MatchParticipant as DomainMatchParticipant
+import com.faforever.tournamentlauncher.domain.MatchResult as DomainMatchResult
+import com.faforever.tournamentlauncher.domain.TeamResult as DomainTeamResult
 
 // TODO: Move this to faf-java-commons
 
@@ -76,7 +81,15 @@ enum class ArmyOutcome {
     DEFEAT,
     DRAW,
     UNKNOWN,
-    CONFLICTING
+    CONFLICTING;
+
+    fun toDomainArmyOutcome() = when(this) {
+        VICTORY -> DomainArmyOutcome.VICTORY
+        DEFEAT -> DomainArmyOutcome.DEFEAT
+        DRAW -> DomainArmyOutcome.DRAW
+        UNKNOWN -> DomainArmyOutcome.UNKNOWN
+        CONFLICTING -> DomainArmyOutcome.CONFLICTING
+    }
 }
 
 data class ArmyResult(
@@ -86,14 +99,25 @@ data class ArmyResult(
     @JsonProperty("army_outcome")
     val armyOutcome: ArmyOutcome,
     val metadata: List<Any>,
-
-)
+) {
+    fun toDomainArmyResult() = DomainArmyResult(
+        playerId,
+        armyOutcome.toDomainArmyOutcome()
+    )
+}
 
 enum class GameOutcome {
     VICTORY,
     DEFEAT,
     DRAW,
-    UNKNOWN,
+    UNKNOWN;
+
+    fun toDomainGameOutcome() = when(this) {
+        VICTORY -> DomainGameOutcome.VICTORY
+        DEFEAT -> DomainGameOutcome.DEFEAT
+        DRAW -> DomainGameOutcome.DRAW
+        UNKNOWN -> DomainGameOutcome.UNKNOWN
+    }
 }
 
 data class TeamResult(
@@ -102,7 +126,13 @@ data class TeamResult(
     val playerIds: List<Int>,
     @JsonProperty("army_results")
     val armyResults: List<ArmyResult>
-)
+) {
+    fun toDomainTeamResult() = DomainTeamResult(
+        outcome.toDomainGameOutcome(),
+        playerIds,
+        armyResults.map { it.toDomainArmyResult() }
+    )
+}
 
 data class MatchResult(
     @JsonProperty("game_id")
@@ -119,4 +149,11 @@ data class MatchResult(
     val commanderKills: Map<String, Int>,
     val validity: String, // TODO: Enum
     val teams: List<TeamResult>
-)
+) {
+    fun toDomainMatchResult() = DomainMatchResult(
+        gameId,
+        commanderKills,
+        validity,
+        teams.map { it.toDomainTeamResult() }
+    )
+}

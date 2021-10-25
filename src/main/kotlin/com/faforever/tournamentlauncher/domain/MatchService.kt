@@ -5,6 +5,7 @@ import com.faforever.tournamentlauncher.messaging.toLobbyDtoMatchParticipant
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 data class Match(
     val name: String,
@@ -25,8 +26,8 @@ class MatchService(
     @Qualifier("createGameRequestSink")
     private val createGameRequestSink: (MatchCreateRequest) -> Unit
 ) {
-    private val pendingGames: MutableMap<UUID, Match> = mutableMapOf()
-    private val runningGames: MutableMap<Int, Match> = mutableMapOf()
+    private val pendingGames: MutableMap<UUID, Match> = ConcurrentHashMap()
+    private val runningGames: MutableMap<Int, Match> = ConcurrentHashMap()
 
     fun getPendingGames() = pendingGames.toMap()
     fun getRunningGames() = runningGames.toMap()
@@ -52,6 +53,10 @@ class MatchService(
     }
 
     fun reportError(requestId: UUID, errorCode: Int) {
-        val game = pendingGames.remove(requestId) ?: throw IllegalStateException("Unknown request id: $requestId")
+        pendingGames.remove(requestId) ?: throw IllegalStateException("Unknown request id: $requestId")
+    }
+
+    fun reportMatchResult(matchResult: MatchResult) {
+        runningGames.remove(matchResult.gameId) ?: throw IllegalStateException("Unknown game id: ${matchResult.gameId}")
     }
 }

@@ -7,17 +7,17 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class MatchController(private val launchService: MatchService) {
+class MatchController(private val matchService: MatchService) {
     @PostMapping("/createMatch")
     fun createMatch(
         @RequestBody match: Match
     ) {
-        launchService.initiateGame(match.toDomainMatch())
+        matchService.initiateGame(match.toDomainMatch())
     }
 
     @GetMapping("/listMatches")
     fun listMatches() = mapOf(
-        "pendingGames" to launchService.getPendingGames(),
-        "runningGames" to launchService.getRunningGames(),
+        "pendingGames" to matchService.getPendingGames(),
+        "runningGames" to matchService.getRunningGames(),
     )
 }
