@@ -64,7 +64,7 @@ class MatchService(
         }
     }
 
-    fun reportError(requestId: UUID, errorCode: Int) {
+    fun reportError(requestId: UUID, errorCode: String) {
         val pendingGame = pendingGames.remove(requestId)
 
         if (pendingGame == null) {
