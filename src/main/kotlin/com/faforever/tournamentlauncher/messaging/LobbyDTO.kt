@@ -72,7 +72,7 @@ data class MatchCreateSuccess(
 
 data class MatchCreateError(
     @JsonProperty("error_code")
-    val errorCode: Int,
+    val errorCode: String,
     val args: Any,
 )
 
