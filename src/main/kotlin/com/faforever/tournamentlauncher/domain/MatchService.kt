@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap
 data class Match(
     val name: String,
     val mapName: String,
-    val matchmakerQueue: String,
+    val featuredMod: String,
     val participants: List<MatchParticipant>
 )
 
@@ -35,14 +35,14 @@ class MatchService(
     fun getPendingGames() = pendingGames.toMap()
     fun getRunningGames() = runningGames.toMap()
 
-    fun initiateGame(match: Match) {
+    fun initiateGame(match: Match): UUID {
         val matchId = UUID.randomUUID()
 
         val matchCreateRequest = MatchCreateRequest(
             requestId = matchId,
             gameName = match.name,
             mapName = match.mapName,
-            matchmakerQueue = match.matchmakerQueue,
+            featuredMod = match.featuredMod,
             participants = match.participants.map { it.toLobbyDtoMatchParticipant() }
         )
 
@@ -50,6 +50,7 @@ class MatchService(
 
         pendingGames[matchId] = match
         createGameRequestSink(matchCreateRequest)
+        return matchId
     }
 
     fun reportSuccess(requestId: UUID, gameId: Int) {
@@ -79,7 +80,7 @@ class MatchService(
         val runningGame = runningGames.remove(matchResult.gameId)
 
         if (runningGame == null) {
-            // This could be a game requested by a different service
+            // TODO: This could be a game requested by a different service
             logger.debug { "Game id ${matchResult.gameId} is unknown, silently ignoring" }
         } else {
             logger.debug { "Receive game results for game id ${matchResult.gameId}: $matchResult" }

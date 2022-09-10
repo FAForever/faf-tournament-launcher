@@ -54,14 +54,14 @@ fun DomainMatchParticipant.toLobbyDtoMatchParticipant() = MatchParticipant(
 )
 
 data class MatchCreateRequest(
-    @JsonIgnore
+    @JsonProperty("request_id")
     val requestId: UUID,
     @JsonProperty("game_name")
     val gameName: String,
     @JsonProperty("map_name")
     val mapName: String,
-    @JsonProperty("matchmaker_queue")
-    val matchmakerQueue: String,
+    @JsonProperty("featured_mod")
+    val featuredMod: String, //TODO:enum
     val participants: List<MatchParticipant>,
 )
 

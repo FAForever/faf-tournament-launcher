@@ -5,14 +5,17 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
+import java.util.*
+import javax.validation.Valid
 
 @RestController
 class MatchController(private val matchService: MatchService) {
     @PostMapping("/createMatch")
     fun createMatch(
-        @RequestBody match: Match
-    ) {
-        matchService.initiateGame(match.toDomainMatch())
+        @Valid @RequestBody match: Match
+    ): UUID {
+        return matchService.initiateGame(match.toDomainMatch());
     }
 
     @GetMapping("/listMatches")

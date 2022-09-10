@@ -36,3 +36,5 @@ spring:
 logging:
   level:
     ROOT: info
+server:
+  port: 8012
