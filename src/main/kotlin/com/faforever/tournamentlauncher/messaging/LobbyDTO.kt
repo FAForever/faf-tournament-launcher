@@ -1,6 +1,5 @@
 package com.faforever.tournamentlauncher.messaging
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.UUID
 import com.faforever.tournamentlauncher.domain.ArmyOutcome as DomainArmyOutcome
@@ -62,6 +61,8 @@ data class MatchCreateRequest(
     val mapName: String,
     @JsonProperty("featured_mod")
     val featuredMod: String, //TODO:enum
+    @JsonProperty("game_options")
+    val gameOptions: Map<String,String>,
     val participants: List<MatchParticipant>,
 )
 
@@ -69,11 +70,19 @@ data class MatchCreateSuccess(
     @JsonProperty("game_id")
     val gameId: Int,
 )
-
+enum class MatchCreateErrorCode {
+    PLAYER_NOT_ONLINE,
+    PLAYER_NOT_IDLE,
+    PLAYER_NOT_CONFIRMING,
+    PLAYER_NOT_STARTING,
+    PLAYER_NOT_CONNECTING,
+    OTHER
+}
 data class MatchCreateError(
     @JsonProperty("error_code")
-    val errorCode: String,
-    val args: Any,
+    val errorCode: MatchCreateErrorCode,
+    @JsonProperty("players_causing_cancel")
+    val playerIdsCausingCancel: List<String>?,
 )
 
 enum class ArmyOutcome {

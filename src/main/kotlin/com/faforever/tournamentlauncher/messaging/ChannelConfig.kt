@@ -48,7 +48,7 @@ class RabbitConfig {
         val requestId = UUID.fromString(errorMessage.headers[CORRELATION_ID] as String)
         logger.trace { "Received MatchCreateSuccess (request id $requestId): ${errorMessage.payload}" }
 
-        matchService.reportError(requestId, errorMessage.payload.errorCode)
+        matchService.reportError(requestId, errorMessage.payload.errorCode.name, errorMessage.payload.playerIdsCausingCancel)
     }
 
     @Bean

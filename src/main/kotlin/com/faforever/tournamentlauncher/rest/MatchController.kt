@@ -22,5 +22,6 @@ class MatchController(private val matchService: MatchService) {
     fun listMatches() = mapOf(
         "pendingGames" to matchService.getPendingGames(),
         "runningGames" to matchService.getRunningGames(),
+        "erroredGames" to matchService.getErroredGames(),
     )
 }

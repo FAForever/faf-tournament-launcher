@@ -32,12 +32,14 @@ data class Match(
     val name: String,
     val mapName: String,
     val featuredMod: String,
+    val gameOptions: Map<String,String>,
     @field:NotEmpty val participants: List<MatchParticipant>,
 ) {
     fun toDomainMatch() = DomainMatch(
         name,
         mapName,
         featuredMod,
+        gameOptions,
         participants.map { it.toDomainMatchParticipant() },
     )
 }
@@ -45,7 +47,7 @@ data class Match(
 data class MatchParticipant(
     @field:Min(1) val playerId: Int,
     val team: Int,
-    val slot: Int,
+    @field:Min(1) val slot: Int,
     val faction: DomainFaction,
 ) {
     fun toDomainMatchParticipant() = DomainMatchParticipant(

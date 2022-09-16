@@ -12,7 +12,12 @@ data class Match(
     val name: String,
     val mapName: String,
     val featuredMod: String,
+    val gameOptions: Map<String,String>,
     val participants: List<MatchParticipant>
+)
+data class MatchError(
+    val code: String,
+    val playerIdsCausingError: List<String>?
 )
 
 data class MatchParticipant(
@@ -29,11 +34,13 @@ class MatchService(
 ) {
     companion object : KLogging()
 
+    private val erroredGames: MutableMap<UUID, MatchError> = ConcurrentHashMap() //TODO: Clean up after time
     private val pendingGames: MutableMap<UUID, Match> = ConcurrentHashMap()
-    private val runningGames: MutableMap<Int, Match> = ConcurrentHashMap()
+    private val runningGames: MutableMap<UUID, Int> = ConcurrentHashMap()
 
     fun getPendingGames() = pendingGames.toMap()
     fun getRunningGames() = runningGames.toMap()
+    fun getErroredGames() = erroredGames.toMap()
 
     fun initiateGame(match: Match): UUID {
         val matchId = UUID.randomUUID()
@@ -43,6 +50,7 @@ class MatchService(
             gameName = match.name,
             mapName = match.mapName,
             featuredMod = match.featuredMod,
+            gameOptions = match.gameOptions,
             participants = match.participants.map { it.toLobbyDtoMatchParticipant() }
         )
 
@@ -57,30 +65,35 @@ class MatchService(
         val game = pendingGames.remove(requestId)
 
         if (game == null) {
-            // This could be a game requested by a different service
             logger.debug { "Game $gameId is unknown, silently ignoring" }
         } else {
             logger.debug { "Game $gameId created successfully for request id $requestId" }
-            runningGames[gameId] = game
+            runningGames[requestId] = gameId
         }
     }
 
-    fun reportError(requestId: UUID, errorCode: String) {
+    fun reportError(requestId: UUID, errorCode: String, playerIdsCausingCancel: List<String>?) {
+        erroredGames[requestId] = MatchError(errorCode, playerIdsCausingCancel)
         val pendingGame = pendingGames.remove(requestId)
 
         if (pendingGame == null) {
-            // This could be a game requested by a different service
             logger.debug { "Request id $requestId is unknown, silently ignoring" }
         } else {
-            logger.error { "Creating game for request id $requestId failed (error code $errorCode)" }
+            logger.info { "Creating game for request id $requestId failed (error code $errorCode)" }
         }
     }
 
     fun reportMatchResult(matchResult: MatchResult) {
-        val runningGame = runningGames.remove(matchResult.gameId)
+        val entries = runningGames.filter { it.value == matchResult.gameId }.entries
+        if(entries.isEmpty()){
+            logger.debug { "Game id ${matchResult.gameId} is unknown, silently ignoring" }
+            return
+        }
+        val runningGame = runningGames.remove(
+            entries.first().key
+        )
 
         if (runningGame == null) {
-            // TODO: This could be a game requested by a different service
             logger.debug { "Game id ${matchResult.gameId} is unknown, silently ignoring" }
         } else {
             logger.debug { "Receive game results for game id ${matchResult.gameId}: $matchResult" }
