@@ -60,9 +60,9 @@ data class MatchCreateRequest(
     @JsonProperty("map_name")
     val mapName: String,
     @JsonProperty("featured_mod")
-    val featuredMod: String, //TODO:enum
+    val featuredMod: String, // TODO:enum
     @JsonProperty("game_options")
-    val gameOptions: Map<String,String>,
+    val gameOptions: Map<String, String>,
     val participants: List<MatchParticipant>,
 )
 

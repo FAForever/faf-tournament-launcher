@@ -12,7 +12,7 @@ data class Match(
     val name: String,
     val mapName: String,
     val featuredMod: String,
-    val gameOptions: Map<String,String>,
+    val gameOptions: Map<String, String>,
     val participants: List<MatchParticipant>
 )
 data class MatchError(
@@ -34,7 +34,7 @@ class MatchService(
 ) {
     companion object : KLogging()
 
-    private val erroredGames: MutableMap<UUID, MatchError> = ConcurrentHashMap() //TODO: Clean up after time
+    private val erroredGames: MutableMap<UUID, MatchError> = ConcurrentHashMap() // TODO: Clean up after time
     private val pendingGames: MutableMap<UUID, Match> = ConcurrentHashMap()
     private val runningGames: MutableMap<UUID, Int> = ConcurrentHashMap()
 
@@ -85,7 +85,7 @@ class MatchService(
 
     fun reportMatchResult(matchResult: MatchResult) {
         val entries = runningGames.filter { it.value == matchResult.gameId }.entries
-        if(entries.isEmpty()){
+        if (entries.isEmpty()) {
             logger.debug { "Game id ${matchResult.gameId} is unknown, silently ignoring" }
             return
         }

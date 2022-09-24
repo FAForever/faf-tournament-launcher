@@ -2,7 +2,6 @@ package com.faforever.tournamentlauncher.rest
 
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotEmpty
-import javax.validation.constraints.NotNull
 import com.faforever.tournamentlauncher.domain.Faction as DomainFaction
 import com.faforever.tournamentlauncher.domain.Match as DomainMatch
 import com.faforever.tournamentlauncher.domain.MatchParticipant as DomainMatchParticipant
@@ -32,7 +31,7 @@ data class Match(
     val name: String,
     val mapName: String,
     val featuredMod: String,
-    val gameOptions: Map<String,String>,
+    val gameOptions: Map<String, String>,
     @field:NotEmpty val participants: List<MatchParticipant>,
 ) {
     fun toDomainMatch() = DomainMatch(
