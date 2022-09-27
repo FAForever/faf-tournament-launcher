@@ -70,20 +70,21 @@ data class MatchCreateSuccess(
     @JsonProperty("game_id")
     val gameId: Int,
 )
-enum class MatchCreateErrorCode {
-    PLAYER_NOT_ONLINE,
-    PLAYER_NOT_IDLE,
-    PLAYER_NOT_CONFIRMING,
-    PLAYER_NOT_STARTING,
-    PLAYER_NOT_CONNECTING,
-    OTHER
-}
 data class MatchCreateError(
     @JsonProperty("error_code")
     val errorCode: MatchCreateErrorCode,
     @JsonProperty("players_causing_cancel")
-    val playerIdsCausingCancel: List<String>?,
-)
+    val playerIdsCausingCancel: List<String>?
+){
+    enum class MatchCreateErrorCode {
+        PLAYER_NOT_ONLINE,
+        PLAYER_NOT_IDLE,
+        PLAYER_NOT_CONFIRMING,
+        PLAYER_NOT_STARTING,
+        PLAYER_NOT_CONNECTING,
+        OTHER
+    }
+}
 
 enum class ArmyOutcome {
     VICTORY,
