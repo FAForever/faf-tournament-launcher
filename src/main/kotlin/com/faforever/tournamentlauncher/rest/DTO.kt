@@ -1,5 +1,7 @@
 package com.faforever.tournamentlauncher.rest
 
+import javax.validation.constraints.Min
+import javax.validation.constraints.NotEmpty
 import com.faforever.tournamentlauncher.domain.Faction as DomainFaction
 import com.faforever.tournamentlauncher.domain.Match as DomainMatch
 import com.faforever.tournamentlauncher.domain.MatchParticipant as DomainMatchParticipant
@@ -28,21 +30,23 @@ fun DomainFaction.toRestDTOFaction() = when (this) {
 data class Match(
     val name: String,
     val mapName: String,
-    val matchmakerQueue: String,
-    val participants: List<MatchParticipant>,
+    val featuredMod: String,
+    val gameOptions: Map<String, String>,
+    @field:NotEmpty val participants: List<MatchParticipant>,
 ) {
     fun toDomainMatch() = DomainMatch(
         name,
         mapName,
-        matchmakerQueue,
+        featuredMod,
+        gameOptions,
         participants.map { it.toDomainMatchParticipant() },
     )
 }
 
 data class MatchParticipant(
-    val playerId: Int,
+    @field:Min(1) val playerId: Int,
     val team: Int,
-    val slot: Int,
+    @field:Min(1) val slot: Int,
     val faction: DomainFaction,
 ) {
     fun toDomainMatchParticipant() = DomainMatchParticipant(

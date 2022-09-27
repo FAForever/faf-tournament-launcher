@@ -1,0 +1,10 @@
+logging:
+  level:
+    ROOT: info
+spring:
+  rabbitmq:
+    host: "localhost"
+    port: 5672
+    username: "faf-python-server"
+    password: "banana"
+    virtual-host: "/faf-core"

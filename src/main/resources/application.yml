@@ -12,7 +12,7 @@ spring:
           group: "tourneylauncher.createGame.failed"
         gameResult-in-0:
           destination: "faf-lobby"
-          group: "tourneylauncher.gameResults"
+          group: "success.gameResults.create"
       rabbit:
         bindings:
           createGameRequest-out-0:
@@ -36,3 +36,5 @@ spring:
 logging:
   level:
     ROOT: info
+server:
+  port: 8012
