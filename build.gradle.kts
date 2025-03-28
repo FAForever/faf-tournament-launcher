@@ -9,7 +9,7 @@ plugins {
     kotlin("plugin.spring") version kotlinVersion
     id("org.springframework.boot") version "2.7.8"
     id("io.spring.dependency-management") version "1.0.15.RELEASE"
-    id("com.google.cloud.tools.jib") version "3.1.4"
+    id("com.google.cloud.tools.jib") version "3.4.5"
 
     // /****** Additional tooling *****/
     // Code formatting
