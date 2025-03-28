@@ -7,7 +7,7 @@ plugins {
 
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
-    id("org.springframework.boot") version "3.0.13"
+    id("org.springframework.boot") version "3.4.4"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.google.cloud.tools.jib") version "3.4.5"
 
@@ -30,7 +30,7 @@ repositories {
     mavenCentral()
 }
 
-extra["springCloudVersion"] = "2022.0.5"
+extra["springCloudVersion"] = "2024.0.1"
 
 dependencies {
     implementation("io.github.microutils:kotlin-logging:3.0.5")
