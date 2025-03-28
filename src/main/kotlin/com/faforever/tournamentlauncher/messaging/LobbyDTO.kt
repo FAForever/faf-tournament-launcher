@@ -75,7 +75,7 @@ data class MatchCreateError(
     val errorCode: MatchCreateErrorCode,
     @JsonProperty("players_causing_cancel")
     val playerIdsCausingCancel: List<String>?
-){
+) {
     enum class MatchCreateErrorCode {
         PLAYER_NOT_ONLINE,
         PLAYER_NOT_IDLE,
