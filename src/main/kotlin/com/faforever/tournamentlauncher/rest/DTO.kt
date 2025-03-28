@@ -1,7 +1,7 @@
 package com.faforever.tournamentlauncher.rest
 
-import javax.validation.constraints.Min
-import javax.validation.constraints.NotEmpty
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.NotEmpty
 import com.faforever.tournamentlauncher.domain.Faction as DomainFaction
 import com.faforever.tournamentlauncher.domain.Match as DomainMatch
 import com.faforever.tournamentlauncher.domain.MatchParticipant as DomainMatchParticipant
