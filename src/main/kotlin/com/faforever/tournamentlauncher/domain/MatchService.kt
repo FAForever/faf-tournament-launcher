@@ -13,24 +13,25 @@ data class Match(
     val mapName: String,
     val featuredMod: String,
     val gameOptions: Map<String, String>,
-    val participants: List<MatchParticipant>
+    val participants: List<MatchParticipant>,
 )
+
 data class MatchError(
     val code: String,
-    val playerIdsCausingError: List<String>?
+    val playerIdsCausingError: List<String>?,
 )
 
 data class MatchParticipant(
     val playerId: Int,
     val team: Int,
     val slot: Int,
-    val faction: Faction
+    val faction: Faction,
 )
 
 @Service
 class MatchService(
     @Qualifier("createGameRequestSink")
-    private val createGameRequestSink: (MatchCreateRequest) -> Unit
+    private val createGameRequestSink: (MatchCreateRequest) -> Unit,
 ) {
     companion object : KLogging()
 
@@ -39,20 +40,23 @@ class MatchService(
     private val runningGames: MutableMap<UUID, Int> = ConcurrentHashMap()
 
     fun getPendingGames() = pendingGames.toMap()
+
     fun getRunningGames() = runningGames.toMap()
+
     fun getErroredGames() = erroredGames.toMap()
 
     fun initiateGame(match: Match): UUID {
         val matchId = UUID.randomUUID()
 
-        val matchCreateRequest = MatchCreateRequest(
-            requestId = matchId,
-            gameName = match.name,
-            mapName = match.mapName,
-            featuredMod = match.featuredMod,
-            gameOptions = match.gameOptions,
-            participants = match.participants.map { it.toLobbyDtoMatchParticipant() }
-        )
+        val matchCreateRequest =
+            MatchCreateRequest(
+                requestId = matchId,
+                gameName = match.name,
+                mapName = match.mapName,
+                featuredMod = match.featuredMod,
+                gameOptions = match.gameOptions,
+                participants = match.participants.map { it.toLobbyDtoMatchParticipant() },
+            )
 
         logger.debug { "Requesting match create: $matchCreateRequest" }
 
@@ -61,7 +65,10 @@ class MatchService(
         return matchId
     }
 
-    fun reportSuccess(requestId: UUID, gameId: Int) {
+    fun reportSuccess(
+        requestId: UUID,
+        gameId: Int,
+    ) {
         val game = pendingGames.remove(requestId)
 
         if (game == null) {
@@ -72,7 +79,11 @@ class MatchService(
         }
     }
 
-    fun reportError(requestId: UUID, errorCode: String, playerIdsCausingCancel: List<String>?) {
+    fun reportError(
+        requestId: UUID,
+        errorCode: String,
+        playerIdsCausingCancel: List<String>?,
+    ) {
         erroredGames[requestId] = MatchError(errorCode, playerIdsCausingCancel)
         val pendingGame = pendingGames.remove(requestId)
 
@@ -89,9 +100,10 @@ class MatchService(
             logger.debug { "Game id ${matchResult.gameId} is unknown, silently ignoring" }
             return
         }
-        val runningGame = runningGames.remove(
-            entries.first().key
-        )
+        val runningGame =
+            runningGames.remove(
+                entries.first().key,
+            )
 
         if (runningGame == null) {
             logger.debug { "Game id ${matchResult.gameId} is unknown, silently ignoring" }

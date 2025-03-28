@@ -24,39 +24,41 @@ class RabbitConfig {
 
             streamBridge.send(
                 "createGameRequest-out-0",
-                MessageBuilder.withPayload(createGameRequest)
+                MessageBuilder
+                    .withPayload(createGameRequest)
                     .setHeader(ROUTING_KEY_HEADER, ROUTING_KEY_LAUNCH_GAME_REQUEST)
                     .setHeader(CORRELATION_ID, createGameRequest.requestId.toString())
-                    .build()
+                    .build(),
             )
         }
 
     @Bean
-    fun createGameSuccess(
-        matchService: MatchService,
-    ): (Message<MatchCreateSuccess>) -> Unit = { successMessage ->
-        val requestId = UUID.fromString(successMessage.headers[CORRELATION_ID] as String)
-        logger.trace { "Received MatchCreateSuccess (request id $requestId): ${successMessage.payload}" }
+    fun createGameSuccess(matchService: MatchService): (Message<MatchCreateSuccess>) -> Unit =
+        { successMessage ->
+            val requestId = UUID.fromString(successMessage.headers[CORRELATION_ID] as String)
+            logger.trace { "Received MatchCreateSuccess (request id $requestId): ${successMessage.payload}" }
 
-        matchService.reportSuccess(requestId, successMessage.payload.gameId)
-    }
-
-    @Bean
-    fun createGameFailed(
-        matchService: MatchService,
-    ): (Message<MatchCreateError>) -> Unit = { errorMessage ->
-        val requestId = UUID.fromString(errorMessage.headers[CORRELATION_ID] as String)
-        logger.trace { "Received MatchCreateSuccess (request id $requestId): ${errorMessage.payload}" }
-
-        matchService.reportError(requestId, errorMessage.payload.errorCode.name, errorMessage.payload.playerIdsCausingCancel)
-    }
+            matchService.reportSuccess(requestId, successMessage.payload.gameId)
+        }
 
     @Bean
-    fun gameResult(
-        matchService: MatchService,
-    ): (Message<MatchResult>) -> Unit = { resultMessage ->
-        logger.trace { "Received MatchResult: ${resultMessage.payload}" }
+    fun createGameFailed(matchService: MatchService): (Message<MatchCreateError>) -> Unit =
+        { errorMessage ->
+            val requestId = UUID.fromString(errorMessage.headers[CORRELATION_ID] as String)
+            logger.trace { "Received MatchCreateSuccess (request id $requestId): ${errorMessage.payload}" }
 
-        matchService.reportMatchResult(resultMessage.payload.toDomainMatchResult())
-    }
+            matchService.reportError(
+                requestId,
+                errorMessage.payload.errorCode.name,
+                errorMessage.payload.playerIdsCausingCancel,
+            )
+        }
+
+    @Bean
+    fun gameResult(matchService: MatchService): (Message<MatchResult>) -> Unit =
+        { resultMessage ->
+            logger.trace { "Received MatchResult: ${resultMessage.payload}" }
+
+            matchService.reportMatchResult(resultMessage.payload.toDomainMatchResult())
+        }
 }

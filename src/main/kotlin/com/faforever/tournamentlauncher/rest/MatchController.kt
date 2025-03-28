@@ -9,18 +9,19 @@ import java.util.UUID
 import javax.validation.Valid
 
 @RestController
-class MatchController(private val matchService: MatchService) {
+class MatchController(
+    private val matchService: MatchService,
+) {
     @PostMapping("/createMatch")
     fun createMatch(
-        @Valid @RequestBody match: Match
-    ): UUID {
-        return matchService.initiateGame(match.toDomainMatch())
-    }
+        @Valid @RequestBody match: Match,
+    ): UUID = matchService.initiateGame(match.toDomainMatch())
 
     @GetMapping("/listMatches")
-    fun listMatches() = mapOf(
-        "pendingGames" to matchService.getPendingGames(),
-        "runningGames" to matchService.getRunningGames(),
-        "erroredGames" to matchService.getErroredGames(),
-    )
+    fun listMatches() =
+        mapOf(
+            "pendingGames" to matchService.getPendingGames(),
+            "runningGames" to matchService.getRunningGames(),
+            "erroredGames" to matchService.getErroredGames(),
+        )
 }

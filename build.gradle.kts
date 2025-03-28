@@ -13,7 +13,7 @@ plugins {
 
     // /****** Additional tooling *****/
     // Code formatting
-    id("com.diffplug.spotless") version "5.12.5"
+    id("com.diffplug.spotless") version "7.0.2"
 }
 
 group = "com.faforever"
@@ -63,13 +63,12 @@ tasks.withType<KotlinCompile> {
 }
 
 spotless {
-    val ktlintVersion = "0.42.1"
     kotlin {
-        ktlint(ktlintVersion)
+        ktlint()
     }
     kotlinGradle {
         target("*.gradle.kts")
-        ktlint(ktlintVersion)
+        ktlint()
     }
 }
 

@@ -10,22 +10,25 @@ enum class Faction {
     UEF,
     CYBRAN,
     AEON,
-    SERAPHIM;
+    SERAPHIM,
+    ;
 
-    fun toDomainFaction() = when (this) {
-        UEF -> DomainFaction.UEF
-        CYBRAN -> DomainFaction.CYBRAN
-        AEON -> DomainFaction.AEON
-        SERAPHIM -> DomainFaction.SERAPHIM
+    fun toDomainFaction() =
+        when (this) {
+            UEF -> DomainFaction.UEF
+            CYBRAN -> DomainFaction.CYBRAN
+            AEON -> DomainFaction.AEON
+            SERAPHIM -> DomainFaction.SERAPHIM
+        }
+}
+
+fun DomainFaction.toRestDTOFaction() =
+    when (this) {
+        DomainFaction.UEF -> Faction.UEF
+        DomainFaction.CYBRAN -> Faction.CYBRAN
+        DomainFaction.AEON -> Faction.AEON
+        DomainFaction.SERAPHIM -> Faction.SERAPHIM
     }
-}
-
-fun DomainFaction.toRestDTOFaction() = when (this) {
-    DomainFaction.UEF -> Faction.UEF
-    DomainFaction.CYBRAN -> Faction.CYBRAN
-    DomainFaction.AEON -> Faction.AEON
-    DomainFaction.SERAPHIM -> Faction.SERAPHIM
-}
 
 data class Match(
     val name: String,
@@ -34,13 +37,14 @@ data class Match(
     val gameOptions: Map<String, String>,
     @field:NotEmpty val participants: List<MatchParticipant>,
 ) {
-    fun toDomainMatch() = DomainMatch(
-        name,
-        mapName,
-        featuredMod,
-        gameOptions,
-        participants.map { it.toDomainMatchParticipant() },
-    )
+    fun toDomainMatch() =
+        DomainMatch(
+            name,
+            mapName,
+            featuredMod,
+            gameOptions,
+            participants.map { it.toDomainMatchParticipant() },
+        )
 }
 
 data class MatchParticipant(
@@ -49,10 +53,11 @@ data class MatchParticipant(
     @field:Min(1) val slot: Int,
     val faction: DomainFaction,
 ) {
-    fun toDomainMatchParticipant() = DomainMatchParticipant(
-        playerId,
-        team,
-        slot,
-        faction,
-    )
+    fun toDomainMatchParticipant() =
+        DomainMatchParticipant(
+            playerId,
+            team,
+            slot,
+            faction,
+        )
 }

@@ -19,5 +19,5 @@ enum class ArmyOutcome {
     DEFEAT,
     DRAW,
     UNKNOWN,
-    CONFLICTING
+    CONFLICTING,
 }

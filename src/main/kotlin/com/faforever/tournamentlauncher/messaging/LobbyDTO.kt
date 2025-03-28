@@ -15,42 +15,50 @@ import com.faforever.tournamentlauncher.domain.TeamResult as DomainTeamResult
 enum class Faction {
     @JsonProperty("uef")
     UEF,
+
     @JsonProperty("cybran")
     CYBRAN,
+
     @JsonProperty("aeon")
     AEON,
+
     @JsonProperty("seraphim")
-    SERAPHIM;
+    SERAPHIM,
 
-    fun toDomainFaction() = when (this) {
-        UEF -> DomainFaction.UEF
-        CYBRAN -> DomainFaction.CYBRAN
-        AEON -> DomainFaction.AEON
-        SERAPHIM -> DomainFaction.SERAPHIM
+    ;
+
+    fun toDomainFaction() =
+        when (this) {
+            UEF -> DomainFaction.UEF
+            CYBRAN -> DomainFaction.CYBRAN
+            AEON -> DomainFaction.AEON
+            SERAPHIM -> DomainFaction.SERAPHIM
+        }
+}
+
+fun DomainFaction.toLobbyDTOFaction() =
+    when (this) {
+        DomainFaction.UEF -> Faction.UEF
+        DomainFaction.CYBRAN -> Faction.CYBRAN
+        DomainFaction.AEON -> Faction.AEON
+        DomainFaction.SERAPHIM -> Faction.SERAPHIM
     }
-}
-
-fun DomainFaction.toLobbyDTOFaction() = when (this) {
-    DomainFaction.UEF -> Faction.UEF
-    DomainFaction.CYBRAN -> Faction.CYBRAN
-    DomainFaction.AEON -> Faction.AEON
-    DomainFaction.SERAPHIM -> Faction.SERAPHIM
-}
 
 data class MatchParticipant(
     @JsonProperty("player_id")
     val playerId: Int,
     val team: Int,
     val slot: Int,
-    val faction: Faction
+    val faction: Faction,
 )
 
-fun DomainMatchParticipant.toLobbyDtoMatchParticipant() = MatchParticipant(
-    playerId,
-    team,
-    slot,
-    faction.toLobbyDTOFaction()
-)
+fun DomainMatchParticipant.toLobbyDtoMatchParticipant() =
+    MatchParticipant(
+        playerId,
+        team,
+        slot,
+        faction.toLobbyDTOFaction(),
+    )
 
 data class MatchCreateRequest(
     @JsonProperty("request_id")
@@ -70,11 +78,12 @@ data class MatchCreateSuccess(
     @JsonProperty("game_id")
     val gameId: Int,
 )
+
 data class MatchCreateError(
     @JsonProperty("error_code")
     val errorCode: MatchCreateErrorCode,
     @JsonProperty("players_causing_cancel")
-    val playerIdsCausingCancel: List<String>?
+    val playerIdsCausingCancel: List<String>?,
 ) {
     enum class MatchCreateErrorCode {
         PLAYER_NOT_ONLINE,
@@ -82,7 +91,7 @@ data class MatchCreateError(
         PLAYER_NOT_CONFIRMING,
         PLAYER_NOT_STARTING,
         PLAYER_NOT_CONNECTING,
-        OTHER
+        OTHER,
     }
 }
 
@@ -91,15 +100,17 @@ enum class ArmyOutcome {
     DEFEAT,
     DRAW,
     UNKNOWN,
-    CONFLICTING;
+    CONFLICTING,
+    ;
 
-    fun toDomainArmyOutcome() = when (this) {
-        VICTORY -> DomainArmyOutcome.VICTORY
-        DEFEAT -> DomainArmyOutcome.DEFEAT
-        DRAW -> DomainArmyOutcome.DRAW
-        UNKNOWN -> DomainArmyOutcome.UNKNOWN
-        CONFLICTING -> DomainArmyOutcome.CONFLICTING
-    }
+    fun toDomainArmyOutcome() =
+        when (this) {
+            VICTORY -> DomainArmyOutcome.VICTORY
+            DEFEAT -> DomainArmyOutcome.DEFEAT
+            DRAW -> DomainArmyOutcome.DRAW
+            UNKNOWN -> DomainArmyOutcome.UNKNOWN
+            CONFLICTING -> DomainArmyOutcome.CONFLICTING
+        }
 }
 
 data class ArmyResult(
@@ -110,24 +121,27 @@ data class ArmyResult(
     val armyOutcome: ArmyOutcome,
     val metadata: List<Any>,
 ) {
-    fun toDomainArmyResult() = DomainArmyResult(
-        playerId,
-        armyOutcome.toDomainArmyOutcome()
-    )
+    fun toDomainArmyResult() =
+        DomainArmyResult(
+            playerId,
+            armyOutcome.toDomainArmyOutcome(),
+        )
 }
 
 enum class GameOutcome {
     VICTORY,
     DEFEAT,
     DRAW,
-    UNKNOWN;
+    UNKNOWN,
+    ;
 
-    fun toDomainGameOutcome() = when (this) {
-        VICTORY -> DomainGameOutcome.VICTORY
-        DEFEAT -> DomainGameOutcome.DEFEAT
-        DRAW -> DomainGameOutcome.DRAW
-        UNKNOWN -> DomainGameOutcome.UNKNOWN
-    }
+    fun toDomainGameOutcome() =
+        when (this) {
+            VICTORY -> DomainGameOutcome.VICTORY
+            DEFEAT -> DomainGameOutcome.DEFEAT
+            DRAW -> DomainGameOutcome.DRAW
+            UNKNOWN -> DomainGameOutcome.UNKNOWN
+        }
 }
 
 data class TeamResult(
@@ -135,13 +149,14 @@ data class TeamResult(
     @JsonProperty("player_ids")
     val playerIds: List<Int>,
     @JsonProperty("army_results")
-    val armyResults: List<ArmyResult>
+    val armyResults: List<ArmyResult>,
 ) {
-    fun toDomainTeamResult() = DomainTeamResult(
-        outcome.toDomainGameOutcome(),
-        playerIds,
-        armyResults.map { it.toDomainArmyResult() }
-    )
+    fun toDomainTeamResult() =
+        DomainTeamResult(
+            outcome.toDomainGameOutcome(),
+            playerIds,
+            armyResults.map { it.toDomainArmyResult() },
+        )
 }
 
 data class MatchResult(
@@ -158,12 +173,13 @@ data class MatchResult(
     @JsonProperty("commander_kills")
     val commanderKills: Map<String, Int>,
     val validity: String, // TODO: Enum
-    val teams: List<TeamResult>
+    val teams: List<TeamResult>,
 ) {
-    fun toDomainMatchResult() = DomainMatchResult(
-        gameId,
-        commanderKills,
-        validity,
-        teams.map { it.toDomainTeamResult() }
-    )
+    fun toDomainMatchResult() =
+        DomainMatchResult(
+            gameId,
+            commanderKills,
+            validity,
+            teams.map { it.toDomainTeamResult() },
+        )
 }
